@@ -41,21 +41,21 @@ class _MyAppState extends State<MyApp> {
     var out = File("/storage/emulated/0/Download/789.wav").openWrite();
     var fileIn = File("/storage/emulated/0/Download/789.pcm");
     writeId(out, 'RIFF');
-    writeInt(out, 36 + fileIn.lengthSync()); //mNumBytes
+    writeInt(out, 36 + fileIn.lengthSync()); //36+N
     writeId(out, 'WAVE');
     /* fmt chunk */
     writeId(out, 'fmt ');
     writeInt(out, 16);
-    writeint(out, 1);
-    writeint(out, 2); //mNumChannels
-    writeInt(out, 44100); //mSampleRate
-    writeInt(out, (1 * 44100 * 16 / 8).floor()); //16->mBitsPerSample
-    writeint(out, (1 * 16 / 8).floor());
-    writeint(out, 16);
+    writeint(out, 1); //音訊格式(PCM)
+    writeint(out, 2); //單聲道1 多聲道2
+    writeInt(out, 44100); //取樣頻率
+    writeInt(out, (1 * 44100 * 16 / 8).toInt()); //聲道數量*取樣頻率*位元深度/8
+    writeint(out, 4);
+    writeint(out, 16); //位元深度
     /* data chunk */
     writeId(out, 'data');
-    writeInt(out, fileIn.lengthSync());
-    out.add(fileIn.readAsBytesSync());
+    writeInt(out, fileIn.lengthSync()); //N
+    out.add(fileIn.readAsBytesSync()); //Data
     await out.close();
   }
 
@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: isRecording ? Colors.red : Colors.black,
         ),
         body: Center(
-          child: Text(isRecording ? "Recording" : "Stop Recording"),
+          child: Text(isRecording ? "Recording" : "Stop Recording123"),
         ),
       ),
     );
